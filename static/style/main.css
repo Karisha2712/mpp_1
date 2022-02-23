@@ -4,14 +4,14 @@ body {
 }
 
 form {
-    width: 60vw!important;
+    width: 60vw !important;
 }
 
 h1 {
     font-size: 64px;
 }
 
-.btn-primary {
+.btn-success {
     width: 12rem;
     height: 2.6rem;
     border-radius: 4px;

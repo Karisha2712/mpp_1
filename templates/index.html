@@ -7,14 +7,11 @@ Todo list
 <form method="post" class="d-flex flex-column container">
     <h4>New task</h4>
     <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Task">
+        <textarea name="task-text" class="form-control" rows="3"></textarea>
     </div>
     <div class="mb-3">
-        <textarea class="form-control" rows="3"></textarea>
+        <input type="date" name="task-deadline" class="form-control" placeholder="01.01.2022">
     </div>
-    <div class="mb-3">
-        <input type="date" class="form-control" placeholder="01.01.2022">
-    </div>
-    <button class="btn-primary">Create task</button>
+    <button type="submit" class="btn-success">Create task</button>
 </form>
 {% endblock %}
