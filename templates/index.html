@@ -4,5 +4,17 @@ Todo list
 {% endblock %}
 
 {% block content %}
-<a href="#">Add task</a>
+<form method="post" class="d-flex flex-column container">
+    <h4>New task</h4>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Task">
+    </div>
+    <div class="mb-3">
+        <textarea class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <input type="date" class="form-control" placeholder="01.01.2022">
+    </div>
+    <button class="btn-primary">Create task</button>
+</form>
 {% endblock %}
