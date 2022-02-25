@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block template %}
+Update task
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center">
+    <h1>Edit task</h1>
+    <form action="/{{task.id}}/update-task" method="post" class="d-flex flex-column" id="form">
+        <div class="mb-3">
+            <input name="task-title" class="form-control" value="{{task.task_title}}">
+        </div>
+        <div class="mb-3">
+            <input type="date" name="task-deadline" class="form-control" placeholder="01.01.2022">
+        </div>
+        <div class="mb-3">
+        <textarea name="task-text" class="form-control" rows="3">
+             {{task.task_text}}
+        </textarea>
+        </div>
+        <button type="submit" class="btn-success">Edit</button>
+    </form>
+</div>
+{% endblock %}

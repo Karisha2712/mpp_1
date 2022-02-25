@@ -1,14 +1,54 @@
 {% extends "base.html" %}
+
+
 {% block template %}
 Todo list
 {% endblock %}
 
+
 {% block content %}
-<form method="post" class="d-flex flex-column container">
-    <h4>New task</h4>
-    <div class="mb-3">
-        <textarea name="task-text" class="form-control" rows="3"></textarea>
+<div class="d-flex flex-column align-items-center">
+
+    <div class="block"><h1>Todo list</h1></div>
+
+    <div class="block">
+        <button class="btn-success" id="add-task">+ Add task</button>
+        <form action="/add-task" method="post" class="d-none" id="form">
+            <h5>New task</h5>
+            <div class="mb-3">
+                <input type="text" name="task-title" class="form-control" placeholder="Title">
+            </div>
+            <div class="mb-3">
+                <input type="date" name="task-deadline" class="form-control" placeholder="01.01.2022">
+            </div>
+            <div class="mb-3">
+                <textarea name="task-text" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="d-flex flex-row">
+                <button type="submit" class="btn-success">Create task</button>
+                <a href="/" class="btn-outline-success d-flex flex-column justify-content-center">Cancel</a>
+            </div>
+        </form>
     </div>
-    <button type="submit" class="btn-success">Create task</button>
-</form>
+
+    {% for task in tasks %}
+    <div class="card">
+        <h5 class="card-header">
+            <b>{{task.task_title}}</b>
+        </h5>
+        <div class="card-body">
+            <div class="status {{statuses[task.status_id]}}">{{statuses[task.status_id]}}</div>
+            <h5 class="card-title">{{task.task_text}}</h5>
+            <p class="card-text">{{task.date}}</p>
+            <a href="/{{task.id}}/update-task" class="btn-link">
+                Edit
+            </a>
+            <a href="/{{task.id}}/delete-task" class="delete-btn btn-link">
+                Delete
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
 {% endblock %}

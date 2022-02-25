@@ -12,8 +12,59 @@ h1 {
 }
 
 .btn-success {
-    width: 12rem;
+    width: 8rem;
     height: 2.6rem;
     border-radius: 4px;
+    margin-bottom: 24px;
+    border: none;
 }
 
+.btn-outline-success {
+    width: 8rem;
+    height: 2.6rem;
+    border: 1px solid;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    background: none;
+    margin-left: 16px;
+    text-align: center;
+}
+
+.delete-btn {
+    margin-left: 8px;
+}
+
+
+textarea {
+    padding: 16px;
+}
+
+.card {
+    width: 60vw;
+    margin-bottom: 24px;
+}
+
+.block {
+    width: 60vw;
+}
+
+.status {
+    font-size: 12px;
+    height: 16px;
+    border-radius: 8px;
+    width: 6vw;
+    text-align: center;
+}
+
+.Done {
+    background: #80ff61;
+}
+
+.Processing {
+    background: #86ffdc;
+}
+
+.Expired {
+    background: #ff6a6f;
+}
