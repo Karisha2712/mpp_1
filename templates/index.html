@@ -13,7 +13,7 @@ Todo list
 
     <div class="block">
         <button class="btn-success" id="add-task">+ Add task</button>
-        <form action="/add-task" method="post" class="d-none" id="form">
+        <form action="/add-task" method="post" class="d-none" id="form" enctype='multipart/form-data'>
             <h5>New task</h5>
             <div class="mb-3">
                 <input type="text" name="task-title" class="form-control" placeholder="Title">
@@ -24,6 +24,12 @@ Todo list
             <div class="mb-3">
                 <textarea name="task-text" class="form-control" rows="3"></textarea>
             </div>
+            <div>
+                <label class="file_loader form-control" id="file-upload-label" for="fileInput">
+                    Load file
+                </label>
+                <input type="file" name="file" id="fileInput" hidden/>
+            </div>
             <div class="d-flex flex-row">
                 <button type="submit" class="btn-success">Create task</button>
                 <a href="/" class="btn-outline-success d-flex flex-column justify-content-center">Cancel</a>
@@ -33,13 +39,14 @@ Todo list
 
     {% for task in tasks %}
     <div class="card">
-        <h5 class="card-header">
+        <h5 class="card-header d-flex flex-row align-items-center">
             <b>{{task.task_title}}</b>
         </h5>
         <div class="card-body">
             <div class="status {{statuses[task.status_id]}}">{{statuses[task.status_id]}}</div>
             <h5 class="card-title">{{task.task_text}}</h5>
             <p class="card-text">{{task.date}}</p>
+            <p class="card-text">{{files[task.id - 1][0].file_name}}</p>
             <a href="/{{task.id}}/update-task" class="btn-link">
                 Edit
             </a>

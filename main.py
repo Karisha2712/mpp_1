@@ -1,8 +1,8 @@
 import datetime
+import os
 
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_apscheduler import APScheduler
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///todo_list.db"
@@ -17,6 +17,7 @@ class Task(db.Model):
     task_text = db.Column(db.Text, nullable=False)
     date = db.Column(db.String, nullable=False)
     status_id = db.Column(db.Integer, nullable=False)
+    task_files = db.relationship('File', backref='task', lazy='dynamic')
 
     def __repr__(self):
         return '<Task %r>' % self.id
@@ -24,7 +25,7 @@ class Task(db.Model):
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    task_id = db.Column(db.Integer, nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     file_name = db.Column(db.String(40), nullable=False)
 
     def __repr__(self):
@@ -34,7 +35,17 @@ class File(db.Model):
 @app.route('/')
 def main_page():
     tasks = Task.query.order_by(Task.status_id.desc()).all()
-    return render_template("index.html", tasks=tasks, statuses=statuses)
+    files = [task.task_files.all() for task in tasks]
+    return render_template("index.html", tasks=tasks, files=files, statuses=statuses)
+
+
+def compare(task):
+    now = datetime.date.today()
+    date = datetime.date.fromisoformat(task.date)
+    if now > date:
+        task.status_id = 2
+    if now < date:
+        task.status_id = 1
 
 
 @app.route('/add-task', methods=['POST'])
@@ -44,12 +55,22 @@ def add_task():
         title = request.form['task-title']
         deadline = request.form['task-deadline']
         task = Task(task_title=title, task_text=text, date=deadline, status_id=1)
+        compare(task)
+        file_object = request.files['file']
+        file1 = File(file_name=file_object.filename, task=task)
         try:
             db.session.add(task)
+            db.session.add(file1)
             db.session.commit()
-            return redirect('/')
-        except:
+        except Exception as e:
+            print(e)
             return "Error"
+        os.chdir('files')
+        os.mkdir(str(task.id))
+        os.chdir(str(task.id))
+        file_object.save(file_object.filename)
+        file_object.close()
+        return redirect('/')
 
 
 @app.route('/<int:id>/delete-task')
@@ -70,6 +91,7 @@ def update_task(id):
         task.task_text = request.form['task-text']
         task.task_title = request.form['task-title']
         task.date = request.form['task-deadline']
+        compare(task)
         try:
             db.session.commit()
             return redirect('/')
@@ -77,28 +99,6 @@ def update_task(id):
             return "Error"
     else:
         return render_template("edit_task.html", task=task)
-
-
-scheduler = APScheduler()
-scheduler.init_app(app=app)
-scheduler.start()
-
-
-@scheduler.scheduler.scheduled_job(trigger='interval', id='apscheduler', seconds=1)
-def apscheduler():
-    tasks = Task.query.all()
-    now = datetime.date.today()
-    for task in tasks:
-        date = datetime.date.fromisoformat(task.date)
-        if now > date and task.status_id != 2:
-            task.status_id = 2
-        if now < date and task.status_id != 1:
-            task.status_id = 1
-    try:
-        db.session.commit()
-    except:
-        return "Error"
-    return redirect('/')
 
 
 if __name__ == "__main__":
