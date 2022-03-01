@@ -10,8 +10,19 @@ Update task
         <div class="mb-3">
             <input name="task-title" class="form-control" value="{{task.task_title}}">
         </div>
+        <select class="form-select form-control" name="task-status">
+            <option class="dropdown-item" selected value="Processing">
+                Processing
+            </option>
+            <option class="dropdown-item" value="Expired">
+                Expired
+            </option>
+            <option class="dropdown-item" value="Done">
+                Done
+            </option>
+        </select>
         <div class="mb-3">
-            <input type="date" name="task-deadline" class="form-control" placeholder="01.01.2022">
+            <input type="date" name="task-deadline" class="form-control" value="{{task.date}}" required>
         </div>
         <div class="mb-3">
         <textarea name="task-text" class="form-control" rows="3">

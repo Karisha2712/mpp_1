@@ -1,5 +1,6 @@
 import datetime
 import os
+import webbrowser
 
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -32,20 +33,34 @@ class File(db.Model):
         return '<File %r>' % self.id
 
 
+def compare(task):
+    if task.status_id != 0:
+        now = datetime.date.today()
+        date = datetime.date.fromisoformat(task.date)
+        if now > date:
+            task.status_id = 2
+        if now < date:
+            task.status_id = 1
+
+
 @app.route('/')
 def main_page():
     tasks = Task.query.order_by(Task.status_id.desc()).all()
+    for task in tasks:
+        compare(task)
+    files = File.query.all()
+    print(files)
     files = [task.task_files.all() for task in tasks]
     return render_template("index.html", tasks=tasks, files=files, statuses=statuses)
 
 
-def compare(task):
-    now = datetime.date.today()
-    date = datetime.date.fromisoformat(task.date)
-    if now > date:
-        task.status_id = 2
-    if now < date:
-        task.status_id = 1
+@app.route('/<int:id>/<string:filename>')
+def open_file(id, filename):
+    current_dir = os.getcwd()
+    os.chdir('files')
+    webbrowser.open('file://' + os.path.realpath(str(id) + '_' + filename))
+    os.chdir(current_dir)
+    return redirect('/')
 
 
 @app.route('/add-task', methods=['POST'])
@@ -65,23 +80,30 @@ def add_task():
         except Exception as e:
             print(e)
             return "Error"
+        current_dir = os.getcwd()
         os.chdir('files')
-        os.mkdir(str(task.id))
-        os.chdir(str(task.id))
-        file_object.save(file_object.filename)
-        file_object.close()
+        file_object.save(str(task.id) + '_' + file_object.filename)
+        os.chdir(current_dir)
         return redirect('/')
 
 
 @app.route('/<int:id>/delete-task')
 def delete_task(id):
     task = Task.query.get_or_404(id)
+    files = task.task_files.all()
     try:
         db.session.delete(task)
+        for file in files:
+            db.session.delete(file)
         db.session.commit()
-        return redirect('/')
     except:
         return "Error"
+    current_dir = os.getcwd()
+    os.chdir('files')
+    for file in files:
+        os.remove(str(task.id) + '_' + file.file_name)
+    os.chdir(current_dir)
+    return redirect('/')
 
 
 @app.route('/<int:id>/update-task', methods=['POST', 'GET'])
@@ -91,7 +113,7 @@ def update_task(id):
         task.task_text = request.form['task-text']
         task.task_title = request.form['task-title']
         task.date = request.form['task-deadline']
-        compare(task)
+        task.status_id = statuses.index(request.form['task-status'])
         try:
             db.session.commit()
             return redirect('/')

@@ -35,11 +35,6 @@ h1 {
     margin-left: 8px;
 }
 
-
-textarea {
-    padding: 16px;
-}
-
 .card {
     width: 60vw;
     margin-bottom: 24px;
@@ -51,21 +46,56 @@ textarea {
 
 .status {
     font-size: 12px;
-    height: 16px;
-    border-radius: 8px;
-    width: 6vw;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 2px;
+    width: 10%;
     text-align: center;
+    text-decoration: none;
+    color: black;
+}
+
+.status:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.card-date {
+    font-size: 12px;
+    color: #777777;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.file-block {
+    margin-bottom: 8px;
+}
+
+.file-link {
+    color: black;
+}
+
+.file-link:hover {
+    color: #777777;
 }
 
 .Done {
-    background: #80ff61;
+    background: #DBEDDB;
 }
 
 .Processing {
-    background: #86ffdc;
+    background: #FDECC8;
 }
 
 .Expired {
-    background: #ff6a6f;
+    background: #FFE2DD;
+}
+
+.content {
+    margin-top: 6vh;
+}
+
+.card-text {
+    margin-bottom: 8px;
 }
 
