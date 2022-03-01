@@ -48,9 +48,7 @@ def main_page():
     tasks = Task.query.order_by(Task.status_id.desc()).all()
     for task in tasks:
         compare(task)
-    files = File.query.all()
-    print(files)
-    files = [task.task_files.all() for task in tasks]
+    files = [task.task_files.all()[0] for task in tasks]
     return render_template("index.html", tasks=tasks, files=files, statuses=statuses)
 
 
@@ -90,18 +88,16 @@ def add_task():
 @app.route('/<int:id>/delete-task')
 def delete_task(id):
     task = Task.query.get_or_404(id)
-    files = task.task_files.all()
+    file = task.task_files.all()[0]
     try:
         db.session.delete(task)
-        for file in files:
-            db.session.delete(file)
+        db.session.delete(file)
         db.session.commit()
     except:
         return "Error"
     current_dir = os.getcwd()
     os.chdir('files')
-    for file in files:
-        os.remove(str(task.id) + '_' + file.file_name)
+    os.remove(str(task.id) + '_' + file.file_name)
     os.chdir(current_dir)
     return redirect('/')
 
